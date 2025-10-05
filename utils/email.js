@@ -4,6 +4,12 @@ const pug = require('pug');
 const htmlToText = require('html-to-text');
 const capitalize = require('./capitalize');
 
+// Use AWS SES if running in container/production with IAM role
+if (process.env.USE_AWS_SES === 'true' || process.env.AWS_EXECUTION_ENV) {
+  module.exports = require('./sesEmail');
+  return;
+}
+
 module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
@@ -14,17 +20,7 @@ module.exports = class Email {
 
   //* NEW TRANSPORT
   newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      // SENDGRID
-      return nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
-        },
-      });
-    }
-    // NODEMAILER TO MAILTRAP
+    // NODEMAILER TO MAILTRAP (for local development)
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,

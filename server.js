@@ -1,5 +1,4 @@
 // IMPORT MODULES
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 //!LISTENER FOR UNCAUGHT EXCEPTIONS
@@ -13,24 +12,34 @@ process.on('uncaughtException', (err) => {
 
 // SET CONFIGURATION PATH
 dotenv.config({ path: './config.env' });
-const app = require('./app');
-// CONNECT TO CLOUD SERVER CLUSTER
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
 
-// INIT MONGOOSE CONNECTION TO THE DATABASE
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
+// Force in-memory database for containerized deployment
+process.env.USE_IN_MEMORY_DB = 'true';
+
+const mongoose = require('./utils/mongooseLoader');
+const app = require('./app');
+
+// Initialize database
+const initDB = async () => {
+  if (process.env.USE_IN_MEMORY_DB === 'true') {
+    await mongoose.connect();
+    console.log('In-memory database initialized successfully...');
+  } else {
+    const DB = process.env.DATABASE.replace(
+      '<PASSWORD>',
+      process.env.DATABASE_PASSWORD
+    );
+    await mongoose.connect(DB, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: true,
+      useUnifiedTopology: true,
+    });
     console.log('Database connection successful...');
-  });
+  }
+};
+
+initDB();
 
 // START SERVER
 const port = process.env.PORT || 3000;

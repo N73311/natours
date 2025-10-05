@@ -1,5 +1,5 @@
 // IMPORT MODULES
-const mongoose = require('mongoose');
+const mongoose = require('../utils/mongooseLoader');
 const slugify = require('slugify');
 
 // CREATE TOUR SCHEMA

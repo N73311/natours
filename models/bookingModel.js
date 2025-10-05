@@ -1,5 +1,5 @@
 //* IMPORTS
-const mongoose = require('mongoose');
+const mongoose = require('../utils/mongooseLoader');
 
 // *SCHEMA
 const bookingSchema = new mongoose.Schema({

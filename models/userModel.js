@@ -1,6 +1,6 @@
 // IMPORT MODULES
 const crypto = require('crypto');
-const mongoose = require('mongoose');
+const mongoose = require('../utils/mongooseLoader');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 

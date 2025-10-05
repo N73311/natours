@@ -27,7 +27,7 @@ Natours is a tour booking platform featuring user authentication, tour managemen
 - MongoDB 4.0 or higher
 - Stripe account
 - Mapbox account
-- Email service (SendGrid/Mailtrap)
+- Email service (AWS SES/Mailtrap)
 
 ### Installation
 
